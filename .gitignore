@@ -1,0 +1,13 @@
+/bin/
+*/target/*
+/.classpath
+/.project
+/.settings
+*.classpath
+*.project
+.settings
+*.wixobj
+*.msi
+.DS_Store
+
+/target/

@@ -1,0 +1,6 @@
+L_BN=`cat ../build.number`
+APP_INFO_NAME=`xmllint ../../pom.xml --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
+APP_INFO_VERSION=`xmllint ../../pom.xml --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()'`.$L_BN
+APP_INFO_VENDOR=`xmllint ../../pom.xml --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="vendor"]/text()'`
+APP_INFO_ID=`xmllint ../../pom.xml --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()'`
+APP_INFO_MODULE=`xmllint ../../pom.xml --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="module"]/text()'`

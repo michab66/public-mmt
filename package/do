@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set +eu
+
+if [ -z "$JDK_14_HOME" ]; then
+    echo "JDK_14_HOME not set."
+	exit 1
+fi
+
+BIN=$JDK_14_HOME/bin
+# The file that defines the package builder options.
+JPACKAGE_OPTS_FILE=jpackage.opts.sh
+
+## help : Print jpackage help.
+function task_help {
+    $BIN/jpackage --help
+}
+
+## generate : Generate image.
+function task_generate {
+
+    BUILD_DIR=../../target/package-installers/$PLATFORM
+    if [ -d "$BUILD_DIR"  ]; then
+        rm -rf "$BUILD_DIR"
+    fi
+    mkdir -p "$BUILD_DIR"
+
+    if [ ! -e "$JPACKAGE_OPTS_FILE" ]; then
+        echo "$JPACKAGE_OPTS_FILE" expected in `pwd`
+        exit 1
+    fi
+
+    # Increment build number.
+    bc <<< "`cat ../build.number`+1" > ../build.number
+
+    ./"$JPACKAGE_OPTS_FILE" > "$BUILD_DIR/jpackage.opts"
+
+    $BIN/jpackage --dest "$BUILD_DIR" "@$BUILD_DIR/jpackage.opts"
+}
+
+## generatex : Generate image.
+function task_generatex {
+    if [ -z $1 ]; then
+        echo Parameter workdir is missing.
+        exit 1
+    fi
+
+    pushd $1
+    task_generate
+    popd
+}
+
+function task_usage {
+  echo "Usage: $0"
+  sed -n 's/^##//p' <$0 | column -t -s ':' |  sed -E $'s/^/\t/'
+}
+
+CMD=${1:-}
+shift || true
+RESOLVED_COMMAND=$(echo "task_"$CMD | sed 's/-/_/g')
+if [ "$(LC_ALL=C type -t $RESOLVED_COMMAND)" == "function" ]; then
+  $RESOLVED_COMMAND "$@"
+else
+  task_usage
+fi
+
