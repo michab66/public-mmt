@@ -19,8 +19,10 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<dep.commons-logging.version>1.2</dep.commons-logging.version>
 		<dep.javafx.version>21.0.3-ea+1</dep.javafx.version>
 		<dep.pdfbox.version>3.0.0</dep.pdfbox.version>
+		<dep.moditect.version>1.2.2.Final</dep.moditect.version>
 	</properties>
 
 	<repositories>
@@ -83,7 +85,7 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
+			<version>${dep.commons-logging.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -205,7 +207,230 @@
 					</arguments>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
+				<version>${dep.moditect.version}</version>
+				<executions>
+					<execution>
+						<id>moditect-pdfbox</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>pdfbox</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.pdfbox
+										{
+										exports
+										org.apache.pdfbox.pdmodel.graphics.color;
+										exports
+										org.apache.pdfbox.pdmodel.common.function.type4;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.form;
+										exports org.apache.pdfbox.contentstream;
+										exports org.apache.pdfbox.pdfwriter;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.blend;
+										exports
+										org.apache.pdfbox.pdmodel.font.encoding;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.action;
+										exports
+										org.apache.pdfbox.util.filetypedetector;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.optionalcontent;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.markedcontent;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation.layout;
+										exports
+										org.apache.pdfbox.pdmodel.common;
+										exports org.apache.pdfbox.pdfparser;
+										exports org.apache.pdfbox.pdmodel;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation.handlers;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure;
+										exports org.apache.pdfbox.util;
+										exports org.apache.pdfbox.cos;
+										exports org.apache.pdfbox.printing;
+										exports org.apache.pdfbox.filter;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.shading;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.image;
+										exports org.apache.pdfbox.multipdf;
+										// exports org.apache.pdfbox.it.gsub;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.measurement;
+										exports org.apache.pdfbox.text;
+										exports org.apache.pdfbox.io;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.pattern;
+										exports org.apache.pdfbox;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.viewerpreferences;
+										exports org.apache.pdfbox.pdmodel.font;
+										exports
+										org.apache.pdfbox.contentstream.operator;
+										exports
+										org.apache.pdfbox.contentstream.operator.graphics;
+										exports
+										org.apache.pdfbox.contentstream.operator.color;
+										exports
+										org.apache.pdfbox.contentstream.operator.text;
+										exports
+										org.apache.pdfbox.pdmodel.common.filespecification;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation;
+										exports org.apache.pdfbox.rendering;
+										exports
+										org.apache.pdfbox.pdmodel.common.function;
+										exports
+										org.apache.pdfbox.contentstream.operator.markedcontent;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.pagenavigation;
+										// exports org.apache.pdfbox.encryption;
+										exports
+										org.apache.pdfbox.contentstream.operator.state;
+										exports org.apache.pdfbox.pdmodel.fdf;
+										exports
+										org.apache.pdfbox.pdmodel.graphics;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.digitalsignature.visible;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.taggedpdf;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.prepress;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.form;
+										exports
+										org.apache.pdfbox.pdmodel.encryption;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.digitalsignature;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.state;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline;
+										requires org.apache.commons.logging;
+										requires org.apache.fontbox;
+										requires java.desktop;
+										requires java.xml;
+										// requires org.bouncycastle.pkix;
+										// requires org.bouncycastle.provider;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+ 					<execution>
+						<id>moditect-fontbox</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>fontbox</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.fontbox
+										{
+										exports org.apache.fontbox.pfb;
+										exports
+										org.apache.fontbox.util.autodetect;
+										exports org.apache.fontbox.afm;
+										exports org.apache.fontbox.cmap;
+										exports org.apache.fontbox.encoding;
+										// exports org.apache.fontbox.ttf.table.common;
+										// exports org.apache.fontbox.ttf.model;
+										// exports org.apache.fontbox.ttf.table.gsub;
+										exports org.apache.fontbox;
+										// exports org.apache.fontbox.ttf.gsub;
+										exports org.apache.fontbox.util;
+										exports org.apache.fontbox.ttf;
+										exports org.apache.fontbox.cff;
+										exports org.apache.fontbox.type1;
+										requires org.apache.commons.logging;
+										requires java.desktop;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+ 					<execution>
+						<id>moditect-pdfbox-io</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>pdfbox-io</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.pdfbox.io
+										{
+										exports org.apache.pdfbox.io;
+										requires org.apache.commons.logging;
+										requires java.desktop;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-module-infos-commons-logging</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>commons-logging</groupId>
+										<artifactId>commons-logging</artifactId>
+										<version>${dep.commons-logging.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module commons.logging
+										{
+										exports org.apache.commons.logging;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
