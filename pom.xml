@@ -274,7 +274,6 @@
 										exports
 										org.apache.pdfbox.pdmodel.interactive.measurement;
 										exports org.apache.pdfbox.text;
-										exports org.apache.pdfbox.io;
 										exports
 										org.apache.pdfbox.pdmodel.graphics.pattern;
 										exports org.apache.pdfbox;
@@ -324,8 +323,9 @@
 										org.apache.pdfbox.pdmodel.graphics.state;
 										exports
 										org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline;
-										requires org.apache.commons.logging;
+										requires commons.logging;
 										requires org.apache.fontbox;
+										requires org.apache.pdfbox.io;
 										requires java.desktop;
 										requires java.xml;
 										// requires org.bouncycastle.pkix;
@@ -369,7 +369,7 @@
 										exports org.apache.fontbox.ttf;
 										exports org.apache.fontbox.cff;
 										exports org.apache.fontbox.type1;
-										requires org.apache.commons.logging;
+										requires commons.logging;
 										requires java.desktop;
 										}
 									</moduleInfoSource>
@@ -396,7 +396,7 @@
 										module org.apache.pdfbox.io
 										{
 										exports org.apache.pdfbox.io;
-										requires org.apache.commons.logging;
+										requires commons.logging;
 										requires java.desktop;
 										}
 									</moduleInfoSource>

@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>${rawGroupId}</groupId>
+  <artifactId>${rawArtifactId}</artifactId>
+  <version>${rawVersion}.module</version>
+
+  <properties>
+	<rawGroupId>org.apache.pdfbox</rawGroupId>
+	<rawArtifactId>fontbox</rawArtifactId>
+	<rawVersion>3.0.0</rawVersion>
+	
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+  </properties>
+
+  <build>  
+    <plugins>
+	
+	<plugin>
+	   <groupId>org.apache.maven.plugins</groupId>
+	   <artifactId>maven-install-plugin</artifactId>
+	   <version>2.5.1</version>
+	   <configuration>
+		  <groupId>${project.groupId}</groupId>
+		  <artifactId>${project.artifactId}</artifactId>
+		  <version>${project.version}</version>
+		  <packaging>jar</packaging>
+		  <file>${project.build.directory}/modules/${project.artifactId}-${rawVersion}.jar</file>
+		  <generatePom>true</generatePom>
+	   </configuration>
+	   <executions>
+		  <execution>
+			 <id>install-jar-lib</id>
+			 <goals>
+				<goal>install-file</goal>
+			 </goals>
+			 <phase>install</phase>
+		  </execution>
+	   </executions>
+	</plugin>
+	
+      <plugin>
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <version>1.0.0.Beta2</version>
+        <executions>
+            <execution>
+                <id>add-module-infos</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>add-module-info</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                    <modules>
+                        <module>
+                            <artifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${rawVersion}</version>
+                            </artifact>
+							<!-- jlink error reading module:
+							jlink.exe - -verbose -J-Djlink.debug=true @C:\cygw... -->
+                            <moduleInfoSource>
+module org.apache.fontbox
+{
+    exports org.apache.fontbox.pfb;
+    exports org.apache.fontbox.util.autodetect;
+    exports org.apache.fontbox.afm;
+    exports org.apache.fontbox.cmap;
+    exports org.apache.fontbox.encoding;
+//    exports org.apache.fontbox.ttf.table.common;
+//    exports org.apache.fontbox.ttf.model;
+//    exports org.apache.fontbox.ttf.table.gsub;
+    exports org.apache.fontbox;
+//    exports org.apache.fontbox.ttf.gsub;
+    exports org.apache.fontbox.util;
+    exports org.apache.fontbox.ttf;
+    exports org.apache.fontbox.cff;
+    exports org.apache.fontbox.type1;
+
+    requires org.apache.commons.logging;
+    requires java.desktop;
+}
+                            </moduleInfoSource>
+                        </module>
+                    </modules>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    </plugins>
+  </build>  
+</project>

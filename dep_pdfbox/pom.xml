@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>${rawGroupId}</groupId>
+  <artifactId>${rawArtifactId}</artifactId>
+  <version>${rawVersion}.module</version>
+
+  <properties>
+	<rawGroupId>org.apache.pdfbox</rawGroupId>
+	<rawArtifactId>pdfbox</rawArtifactId>
+	<rawVersion>3.0.0</rawVersion>
+	
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>21</maven.compiler.source>
+  </properties>
+
+  <build>
+    <plugins>
+
+	<plugin>
+	   <groupId>org.apache.maven.plugins</groupId>
+	   <artifactId>maven-install-plugin</artifactId>
+	   <version>2.5.1</version>
+	   <configuration>
+		  <groupId>${project.groupId}</groupId>
+		  <artifactId>${project.artifactId}</artifactId>
+		  <version>${project.version}</version>
+		  <packaging>jar</packaging>
+		  <file>${project.build.directory}/modules/${project.artifactId}-${rawVersion}.jar</file>
+		  <generatePom>true</generatePom>
+	   </configuration>
+	   <executions>
+		  <execution>
+			 <id>install-jar-lib</id>
+			 <goals>
+				<goal>install-file</goal>
+			 </goals>
+			 <phase>install</phase>
+		  </execution>
+	   </executions>
+	</plugin>
+	
+      <plugin>
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <version>1.2.2.Final</version>
+        <executions>
+            <execution>
+                <id>add-module-infos</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>add-module-info</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                    <modules>
+                        <module>
+                            <artifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}</artifactId>
+                                <version>${rawVersion}</version>
+                            </artifact>
+                            <moduleInfoSource>
+module org.apache.pdfbox
+{
+    exports org.apache.pdfbox.pdmodel.graphics.color;
+    exports org.apache.pdfbox.pdmodel.common.function.type4;
+    exports org.apache.pdfbox.pdmodel.interactive.form;
+    exports org.apache.pdfbox.contentstream;
+    exports org.apache.pdfbox.pdfwriter;
+    exports org.apache.pdfbox.pdmodel.graphics.blend;
+    exports org.apache.pdfbox.pdmodel.font.encoding;
+    exports org.apache.pdfbox.pdmodel.interactive.action;
+    exports org.apache.pdfbox.util.filetypedetector;
+    exports org.apache.pdfbox.pdmodel.graphics.optionalcontent;
+    exports org.apache.pdfbox.pdmodel.documentinterchange.markedcontent;
+    exports org.apache.pdfbox.pdmodel.interactive.annotation.layout;
+    exports org.apache.pdfbox.pdmodel.common;
+    exports org.apache.pdfbox.pdfparser;
+    exports org.apache.pdfbox.pdmodel;
+    exports org.apache.pdfbox.pdmodel.interactive.annotation.handlers;
+    exports org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure;
+    exports org.apache.pdfbox.util;
+    exports org.apache.pdfbox.cos;
+    exports org.apache.pdfbox.printing;
+    exports org.apache.pdfbox.filter;
+    exports org.apache.pdfbox.pdmodel.graphics.shading;
+    exports org.apache.pdfbox.pdmodel.graphics.image;
+    exports org.apache.pdfbox.multipdf;
+//    exports org.apache.pdfbox.it.gsub;
+    exports org.apache.pdfbox.pdmodel.interactive.measurement;
+    exports org.apache.pdfbox.text;
+    exports org.apache.pdfbox.io;
+    exports org.apache.pdfbox.pdmodel.graphics.pattern;
+    exports org.apache.pdfbox;
+    exports org.apache.pdfbox.pdmodel.interactive.viewerpreferences;
+    exports org.apache.pdfbox.pdmodel.font;
+    exports org.apache.pdfbox.contentstream.operator;
+    exports org.apache.pdfbox.contentstream.operator.graphics;
+    exports org.apache.pdfbox.contentstream.operator.color;
+    exports org.apache.pdfbox.contentstream.operator.text;
+    exports org.apache.pdfbox.pdmodel.common.filespecification;
+    exports org.apache.pdfbox.pdmodel.interactive.annotation;
+    exports org.apache.pdfbox.rendering;
+    exports org.apache.pdfbox.pdmodel.common.function;
+    exports org.apache.pdfbox.contentstream.operator.markedcontent;
+    exports org.apache.pdfbox.pdmodel.interactive.pagenavigation;
+//    exports org.apache.pdfbox.encryption;
+    exports org.apache.pdfbox.contentstream.operator.state;
+    exports org.apache.pdfbox.pdmodel.fdf;
+    exports org.apache.pdfbox.pdmodel.graphics;
+    exports org.apache.pdfbox.pdmodel.interactive.digitalsignature.visible;
+    exports org.apache.pdfbox.pdmodel.documentinterchange.taggedpdf;
+    exports org.apache.pdfbox.pdmodel.documentinterchange.prepress;
+    exports org.apache.pdfbox.pdmodel.graphics.form;
+    exports org.apache.pdfbox.pdmodel.encryption;
+    exports org.apache.pdfbox.pdmodel.interactive.digitalsignature;
+    exports org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination;
+    exports org.apache.pdfbox.pdmodel.graphics.state;
+    exports org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline;
+
+    requires org.apache.commons.logging;
+    requires org.apache.fontbox;
+    requires java.desktop;
+    requires java.xml;
+//    requires org.bouncycastle.pkix;
+//    requires org.bouncycastle.provider;
+}
+                            </moduleInfoSource>
+                        </module>
+                    </modules>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    </plugins>
+  </build>  
+</project>

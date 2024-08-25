@@ -1,0 +1,8 @@
+--module-path "target\\modules\\pdfbox-io-3.0.0.jar;C:\\Users\\micha\\.m2\\repository\\org\\openjfx\\javafx-swing\\21.0.3-ea+1\\javafx-swing-21.0.3-ea+1-win.jar;C:\\Users\\micha\\.m2\\repository\\org\\openjfx\\javafx-base\\21.0.3-ea+1\\javafx-base-21.0.3-ea+1-win.jar;target\\modules\\pdfbox-3.0.0.jar;target\\modules\\fontbox-3.0.0.jar;C:\\Users\\micha\\.m2\\repository\\smacklib\\smack\\21.410\\smack-21.410.jar;C:\\Users\\micha\\.m2\\repository\\org\\openjfx\\javafx-controls\\21.0.3-ea+1\\javafx-controls-21.0.3-ea+1-win.jar;C:\\Users\\micha\\.m2\\repository\\org\\openjfx\\javafx-graphics\\21.0.3-ea+1\\javafx-graphics-21.0.3-ea+1-win.jar;C:\\Users\\micha\\.m2\\repository\\smacklib\\smack_jfx\\21.5\\smack_jfx-21.5.jar;C:\\Users\\micha\\.m2\\repository\\org\\openjfx\\javafx-fxml\\21.0.3-ea+1\\javafx-fxml-21.0.3-ea+1-win.jar;target\\modules\\commons-logging-1.2.jar;C:\\Program Files\\Amazon Corretto\\jdk21.0.2_13\\jmods;target\\mmt-app-2.11.jar"
+--no-header-files
+--no-man-pages
+--add-modules "app.mmt,jdk.localedata"
+--output
+C:\Users\micha\git\public-mmt\target\mmt-jlink
+--include-locales=en,de
+--launcher mmt=app.mmt/de.michab.app.mmt.Mmt
