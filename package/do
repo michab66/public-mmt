@@ -1,19 +1,116 @@
 #!/usr/bin/env bash
 
-set +eu
+set -u
+set -ex
 
-if [ -z "$JDK_14_HOME" ]; then
-    echo "JDK_14_HOME not set."
-	exit 1
-fi
-
-BIN=$JDK_14_HOME/bin
-# The file that defines the package builder options.
-JPACKAGE_OPTS_FILE=jpackage.opts.sh
+PROJECT_HOME=..
 
 ## help : Print jpackage help.
 function task_help {
     $BIN/jpackage --help
+}
+
+## installer_info : Set environment for the installer tasks.
+function task_installer_info {
+    echo "Installer info ..."
+L_BN=`cat ../mmt_app/package/build.number`
+L_POM_PATH=../pom.xml
+APP_INFO_NAME=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
+echo APP_INFO_NAME $APP_INFO_NAME
+APP_INFO_VERSION=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()'`.$L_BN
+echo APP_INFO_VERSION $APP_INFO_VERSION
+APP_INFO_VENDOR=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="vendor"]/text()'`
+echo APP_INFO_VENDOR $APP_INFO_VENDOR
+APP_INFO_ID=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()'`
+echo APP_INFO_ID $APP_INFO_ID
+APP_INFO_MODULE=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="module"]/text()'`
+echo APP_INFO_MODULE $APP_INFO_MODULE
+}
+
+## build : Build the image using Maven
+function task_build {
+    echo "build ..."
+
+    pushd $PROJECT_HOME
+    mvn clean install
+    popd
+
+    task_installer_info
+}
+
+# Comments
+#
+## jlink : Create the product image using jlink
+function task_jlink {
+    task_build
+
+    pushd $PROJECT_HOME
+
+JLINK_LIBS=target/jlinkLib
+JLINK_RESULT=target/jlinkResult
+
+mkdir $JLINK_LIBS
+
+echo "Copying ..."
+cp target/lib/* $JLINK_LIBS
+sleep 1
+cp target/modules/* $JLINK_LIBS
+sleep 1
+cp target/mmt-app-2.11.jar $JLINK_LIBS
+
+echo "Link ..."
+
+jlink \
+--module-path \
+  $JLINK_LIBS \
+--no-header-files \
+--no-man-pages \
+--add-modules \
+javafx.base,\
+javafx.fxml,\
+javafx.controls,\
+javafx.graphics,\
+javafx.swing,\
+org.apache.pdfbox,\
+org.apache.pdfbox.io,\
+org.apache.fontbox,\
+framework.smack,\
+framework.smack_jfx,\
+commons.logging,\
+jdk.localedata,\
+app.mmt \
+--output \
+$JLINK_RESULT \
+--include-locales=en,de \
+--add-options " --add-modules=app.mmt"
+
+    popd
+}
+
+## jpackage : Create the product installer using jpackage
+function task_jpackage {
+    task_jlink
+
+    task_installer_info
+
+    echo "jpackage ..."
+
+    pushd $PROJECT_HOME
+
+INSTALLER=target/packageInstaller
+rm -rf $INSTALLER
+
+jpackage \
+--name "$APP_INFO_NAME" \
+--vendor "$APP_INFO_VENDOR" \
+--app-version "$APP_INFO_VERSION" \
+--module $APP_INFO_MODULE \
+--runtime-image $JLINK_RESULT \
+--dest $INSTALLER
+
+echo "Created installer @ $INSTALLER"
+ls -la $INSTALLER
+    popd
 }
 
 ## generate : Generate image.
