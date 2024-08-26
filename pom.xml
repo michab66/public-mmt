@@ -360,15 +360,16 @@
 										exports org.apache.fontbox.afm;
 										exports org.apache.fontbox.cmap;
 										exports org.apache.fontbox.encoding;
-										// exports org.apache.fontbox.ttf.table.common;
-										// exports org.apache.fontbox.ttf.model;
-										// exports org.apache.fontbox.ttf.table.gsub;
+										exports org.apache.fontbox.ttf.table.common;
+										exports org.apache.fontbox.ttf.model;
+										exports org.apache.fontbox.ttf.table.gsub;
 										exports org.apache.fontbox;
-										// exports org.apache.fontbox.ttf.gsub;
+										exports org.apache.fontbox.ttf.gsub;
 										exports org.apache.fontbox.util;
 										exports org.apache.fontbox.ttf;
 										exports org.apache.fontbox.cff;
 										exports org.apache.fontbox.type1;
+                    requires org.apache.pdfbox.io;
 										requires commons.logging;
 										requires java.desktop;
 										}
@@ -398,6 +399,7 @@
 										exports org.apache.pdfbox.io;
 										requires commons.logging;
 										requires java.desktop;
+                    requires jdk.unsupported;
 										}
 									</moduleInfoSource>
 								</module>

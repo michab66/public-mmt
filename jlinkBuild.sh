@@ -2,6 +2,8 @@
 #set -e
 set -x
 
+mvn clean install
+
 TEST_LIBS=target/jlinkLib
 TEST_TEMP=target/jlinkTmp
 TEST_RESULT=target/jlinkBin
