@@ -14,7 +14,6 @@
 	<properties>
 		<module>app.mmt/de.michab.app.mmt.Mmt</module>
 		<vendor>Michael Binz</vendor>
-		<unused-micbinz-platform>mac</unused-micbinz-platform>
 		<maven.compiler.target>21</maven.compiler.target>
 		<maven.compiler.source>21</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,7 +28,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub OWNER Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/michab66/dev_smack</url>
+			<url>https://maven.pkg.github.com/smacklib/dev_smack</url>
 		</repository>
 	</repositories>
 
@@ -121,38 +120,6 @@
 				<configuration>
 					<encoding>ISO-8859-1</encoding>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jlink-plugin</artifactId>
-				<version>3.0.0-alpha-micbinz-SNAPSHOT</version>
-				<extensions>true</extensions>
-				<configuration>
-					<noHeaderFiles>true</noHeaderFiles>
-					<noManPages>true</noManPages>
-					<includeLocales>en,de</includeLocales>
-					<excludeModules>
-						<module>javafx.baseEmpty</module>
-						<module>javafx.controlsEmpty</module>
-						<module>javafx.graphicsEmpty</module>
-						<module>javafx.fxmlEmpty</module>
-						<module>javafx.swingEmpty</module>
-					</excludeModules>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jmod-plugin</artifactId>
-				<!-- Ensure we get the fix from MJMOD-23
-				(https://issues.apache.org/jira/browse/MJMOD-23) -->
-				<version>3.0.0-alpha-micbinz-SNAPSHOT</version>
-				<extensions>true</extensions>
-				<dependencies>
-					<dependency>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-						<version>6.2</version> <!-- Use newer version of ASM -->
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

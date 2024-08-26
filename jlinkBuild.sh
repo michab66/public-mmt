@@ -7,10 +7,7 @@ mvn clean install
 TEST_LIBS=target/jlinkLib
 TEST_TEMP=target/jlinkTmp
 TEST_RESULT=target/jlinkBin
-
-echo "Delete ..."
-rm -rf $TEST_LIBS $TEST_TEMP $TEST_RESULT
-rm -rf target/mmt-jlink
+INSTALLER_DIR=target/packageInstaller
 
 mkdir $TEST_LIBS $TEST_TEMP
 
@@ -47,6 +44,13 @@ app.mmt \
 --output \
 $TEST_RESULT \
 --include-locales=en,de \
---launcher mmt=app.mmt/de.michab.app.mmt.Mmt
+--launcher mmt=app.mmt/de.michab.app.mmt.Mmt \
+--add-options " --add-modules=app.mmt"
+
+jpackage \
+-n Mmt \
+--module app.mmt/de.michab.app.mmt.Mmt \
+--runtime-image $TEST_RESULT \
+--dest $INSTALLER_DIR
 
 # target/mmt-jlink/bin/java --add-modules app.mmt -m app.mmt/de.michab.app.mmt.Mmt
