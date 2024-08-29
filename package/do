@@ -1,41 +1,78 @@
 #!/usr/bin/env bash
 
 set -u
-set -ex
+set -e
+#set -x
 
 PROJECT_HOME=..
+INSTALLER_TYPE="msi"
 
-## help : Print jpackage help.
+function util_msg {
+    echo "***"
+    echo "***" $1
+    echo "***"
+}
+
 function task_help {
+# help : Print jpackage help.
     $BIN/jpackage --help
+}
+
+
+## platform : Set PLATFORM.
+function task_platform {
+    util_msg "Platform detection ..."
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # ...
+        PLATFORM="linux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        PLATFORM="mac"
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "win32" ]]; then
+        # I'm not sure this can happen.
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        # ...
+        PLATFORM="linux"
+else
+        # Unknown.
+        PLATFORM="unknown"
+fi
+
+  echo PLATFORM=$PLATFORM
 }
 
 ## installer_info : Set environment for the installer tasks.
 function task_installer_info {
-    echo "Installer info ..."
-L_BN=`cat ../mmt_app/package/build.number`
-L_POM_PATH=../pom.xml
-APP_INFO_NAME=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
-echo APP_INFO_NAME $APP_INFO_NAME
-APP_INFO_VERSION=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()'`.$L_BN
-echo APP_INFO_VERSION $APP_INFO_VERSION
-APP_INFO_VENDOR=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="vendor"]/text()'`
-echo APP_INFO_VENDOR $APP_INFO_VENDOR
-APP_INFO_ID=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()'`
-echo APP_INFO_ID $APP_INFO_ID
-APP_INFO_MODULE=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="module"]/text()'`
-echo APP_INFO_MODULE $APP_INFO_MODULE
+
+    local L_BN=`cat ../mmt_app/package/build.number`
+    local L_POM_PATH=../pom.xml
+    APP_INFO_NAME=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
+    echo APP_INFO_NAME $APP_INFO_NAME
+    APP_INFO_VERSION=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()'`.$L_BN
+    echo APP_INFO_VERSION $APP_INFO_VERSION
+    APP_INFO_VENDOR=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="vendor"]/text()'`
+    echo APP_INFO_VENDOR $APP_INFO_VENDOR
+    APP_INFO_ID=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()'`
+    echo APP_INFO_ID $APP_INFO_ID
+    APP_INFO_MODULE=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="module"]/text()'`
+    echo APP_INFO_MODULE $APP_INFO_MODULE
 }
 
 ## build : Build the image using Maven
 function task_build {
-    echo "build ..."
+    util_msg "build ..."
 
     pushd $PROJECT_HOME
     mvn clean install
     popd
-
-    task_installer_info
 }
 
 # Comments
@@ -43,6 +80,7 @@ function task_build {
 ## jlink : Create the product image using jlink
 function task_jlink {
     task_build
+    util_msg "Link ..."
 
     pushd $PROJECT_HOME
 
@@ -58,7 +96,6 @@ cp target/modules/* $JLINK_LIBS
 sleep 1
 cp target/mmt-app-2.11.jar $JLINK_LIBS
 
-echo "Link ..."
 
 jlink \
 --module-path \
@@ -90,23 +127,35 @@ $JLINK_RESULT \
 ## jpackage : Create the product installer using jpackage
 function task_jpackage {
     task_jlink
-
     task_installer_info
+    task_platform
 
-    echo "jpackage ..."
+    util_msg "jpackage ..."
 
     pushd $PROJECT_HOME
 
-INSTALLER=target/packageInstaller
-rm -rf $INSTALLER
+    PACKAGE_TMP=target/packageTmp
+    rm -rf $PACKAGE_TMP
+    mkdir $PACKAGE_TMP
+
+    INSTALLER=target/packageInstaller
+    rm -rf $INSTALLER
+
+set -x
 
 jpackage \
+@package/resources/$PLATFORM/jpackage.opts \
+--resource-dir package/resources/$PLATFORM \
+--verbose \
 --name "$APP_INFO_NAME" \
 --vendor "$APP_INFO_VENDOR" \
 --app-version "$APP_INFO_VERSION" \
 --module $APP_INFO_MODULE \
 --runtime-image $JLINK_RESULT \
---dest $INSTALLER
+--dest $INSTALLER \
+--temp $PACKAGE_TMP
+
+set +x
 
 echo "Created installer @ $INSTALLER"
 ls -la $INSTALLER
@@ -160,4 +209,3 @@ if [ "$(LC_ALL=C type -t $RESOLVED_COMMAND)" == "function" ]; then
 else
   task_usage
 fi
-
