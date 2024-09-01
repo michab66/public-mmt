@@ -134,11 +134,11 @@ function task_jpackage {
 
     pushd $PROJECT_HOME
 
-    PACKAGE_TMP=target/packageTmp
+    local PACKAGE_TMP=target/packageTmp
     rm -rf $PACKAGE_TMP
     mkdir $PACKAGE_TMP
 
-    INSTALLER=target/packageInstaller
+    local INSTALLER=target/packageInstaller
     rm -rf $INSTALLER
 
 set -x
@@ -182,18 +182,6 @@ function task_generate {
     ./"$JPACKAGE_OPTS_FILE" > "$BUILD_DIR/jpackage.opts"
 
     $BIN/jpackage --dest "$BUILD_DIR" "@$BUILD_DIR/jpackage.opts"
-}
-
-## generatex : Generate image.
-function task_generatex {
-    if [ -z $1 ]; then
-        echo Parameter workdir is missing.
-        exit 1
-    fi
-
-    pushd $1
-    task_generate
-    popd
 }
 
 function task_usage {
