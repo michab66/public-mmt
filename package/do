@@ -5,19 +5,12 @@ set -e
 #set -x
 
 PROJECT_HOME=..
-INSTALLER_TYPE="msi"
 
 function util_msg {
     echo "***"
     echo "***" $1
     echo "***"
 }
-
-function task_help {
-# help : Print jpackage help.
-    $BIN/jpackage --help
-}
-
 
 ## platform : Set PLATFORM.
 function task_platform {
@@ -51,8 +44,7 @@ fi
 
 ## installer_info : Set environment for the installer tasks.
 function task_installer_info {
-
-    local L_BN=`cat ../mmt_app/package/build.number`
+    local L_BN=`cat ../package/build.number`
     local L_POM_PATH=../pom.xml
     APP_INFO_NAME=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
     echo APP_INFO_NAME $APP_INFO_NAME
@@ -66,7 +58,7 @@ function task_installer_info {
     echo APP_INFO_MODULE $APP_INFO_MODULE
 }
 
-## build : Build the image using Maven
+## build : Build the image using Maven.
 function task_build {
     util_msg "build ..."
 
@@ -77,8 +69,8 @@ function task_build {
 
 # Comments
 #
-## jlink : Create the product image using jlink
-function task_jlink {
+## link : Create the product image using jlink.
+function task_link {
     task_build
     util_msg "Link ..."
 
@@ -96,7 +88,9 @@ cp target/modules/* $JLINK_LIBS
 sleep 1
 cp target/mmt-app-2.11.jar $JLINK_LIBS
 
-
+set -x
+# See handling of --add-options:
+# https://bugs.openjdk.org/browse/JDK-8303884
 jlink \
 --module-path \
   $JLINK_LIBS \
@@ -121,16 +115,18 @@ $JLINK_RESULT \
 --include-locales=en,de \
 --add-options " --add-modules=app.mmt"
 
+set +x
+
     popd
 }
 
-## jpackage : Create the product installer using jpackage
-function task_jpackage {
-    task_jlink
+## package : Create the product installer using jpackage.
+function task_package {
+    task_link
     task_installer_info
     task_platform
 
-    util_msg "jpackage ..."
+    util_msg "jpackage $PLATFORM ..."
 
     pushd $PROJECT_HOME
 
@@ -162,38 +158,12 @@ ls -la $INSTALLER
     popd
 }
 
-## generate : Generate image.
-function task_generate {
-
-    BUILD_DIR=../../target/package-installers/$PLATFORM
-    if [ -d "$BUILD_DIR"  ]; then
-        rm -rf "$BUILD_DIR"
-    fi
-    mkdir -p "$BUILD_DIR"
-
-    if [ ! -e "$JPACKAGE_OPTS_FILE" ]; then
-        echo "$JPACKAGE_OPTS_FILE" expected in `pwd`
-        exit 1
-    fi
-
-    # Increment build number.
-    bc <<< "`cat ../build.number`+1" > ../build.number
-
-    ./"$JPACKAGE_OPTS_FILE" > "$BUILD_DIR/jpackage.opts"
-
-    $BIN/jpackage --dest "$BUILD_DIR" "@$BUILD_DIR/jpackage.opts"
-}
-
-function task_usage {
-  echo "Usage: $0"
-  sed -n 's/^##//p' <$0 | column -t -s ':' |  sed -E $'s/^/\t/'
-}
-
 CMD=${1:-}
 shift || true
 RESOLVED_COMMAND=$(echo "task_"$CMD | sed 's/-/_/g')
 if [ "$(LC_ALL=C type -t $RESOLVED_COMMAND)" == "function" ]; then
   $RESOLVED_COMMAND "$@"
 else
-  task_usage
+  echo "Usage: $0"
+  sed -n 's/^##//p' <$0 | column -t -s ':' |  sed -E $'s/^/\t/'
 fi
