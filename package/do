@@ -1,58 +1,161 @@
 #!/usr/bin/env bash
 
-set +eu
+set -u
+set -e
+#set -x
 
-if [ -z "$JDK_14_HOME" ]; then
-    echo "JDK_14_HOME not set."
-	exit 1
+PROJECT_HOME=..
+
+function util_msg {
+    echo "***"
+    echo "***" $1
+    echo "***"
+}
+
+## platform : Set PLATFORM.
+function task_platform {
+    util_msg "Platform detection ..."
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # ...
+        PLATFORM="linux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        PLATFORM="mac"
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "win32" ]]; then
+        # I'm not sure this can happen.
+        PLATFORM="windows"
+elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        # ...
+        PLATFORM="linux"
+else
+        # Unknown.
+        PLATFORM="unknown"
 fi
 
-BIN=$JDK_14_HOME/bin
-# The file that defines the package builder options.
-JPACKAGE_OPTS_FILE=jpackage.opts.sh
-
-## help : Print jpackage help.
-function task_help {
-    $BIN/jpackage --help
+  echo PLATFORM=$PLATFORM
 }
 
-## generate : Generate image.
-function task_generate {
-
-    BUILD_DIR=../../target/package-installers/$PLATFORM
-    if [ -d "$BUILD_DIR"  ]; then
-        rm -rf "$BUILD_DIR"
-    fi
-    mkdir -p "$BUILD_DIR"
-
-    if [ ! -e "$JPACKAGE_OPTS_FILE" ]; then
-        echo "$JPACKAGE_OPTS_FILE" expected in `pwd`
-        exit 1
-    fi
-
-    # Increment build number.
-    bc <<< "`cat ../build.number`+1" > ../build.number
-
-    ./"$JPACKAGE_OPTS_FILE" > "$BUILD_DIR/jpackage.opts"
-
-    $BIN/jpackage --dest "$BUILD_DIR" "@$BUILD_DIR/jpackage.opts"
+## installer_info : Set environment for the installer tasks.
+function task_installer_info {
+    local L_BN=`cat ../package/build.number`
+    local L_POM_PATH=../pom.xml
+    APP_INFO_NAME=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="name"]/text()'`
+    echo APP_INFO_NAME $APP_INFO_NAME
+    APP_INFO_VERSION=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()'`.$L_BN
+    echo APP_INFO_VERSION $APP_INFO_VERSION
+    APP_INFO_VENDOR=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="vendor"]/text()'`
+    echo APP_INFO_VENDOR $APP_INFO_VENDOR
+    APP_INFO_ID=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()'`
+    echo APP_INFO_ID $APP_INFO_ID
+    APP_INFO_MODULE=`xmllint $L_POM_PATH --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="module"]/text()'`
+    echo APP_INFO_MODULE $APP_INFO_MODULE
 }
 
-## generatex : Generate image.
-function task_generatex {
-    if [ -z $1 ]; then
-        echo Parameter workdir is missing.
-        exit 1
-    fi
+## build : Build the image using Maven.
+function task_build {
+    util_msg "build ..."
 
-    pushd $1
-    task_generate
+    pushd $PROJECT_HOME
+    mvn clean install
     popd
 }
 
-function task_usage {
-  echo "Usage: $0"
-  sed -n 's/^##//p' <$0 | column -t -s ':' |  sed -E $'s/^/\t/'
+# Comments
+#
+## link : Create the product image using jlink.
+function task_link {
+    task_build
+    util_msg "Link ..."
+
+    pushd $PROJECT_HOME
+
+JLINK_LIBS=target/jlinkLib
+JLINK_RESULT=target/jlinkResult
+
+mkdir $JLINK_LIBS
+
+echo "Copying ..."
+cp target/lib/* $JLINK_LIBS
+sleep 1
+cp target/modules/* $JLINK_LIBS
+sleep 1
+cp target/mmt-app-2.11.jar $JLINK_LIBS
+
+set -x
+# See handling of --add-options:
+# https://bugs.openjdk.org/browse/JDK-8303884
+jlink \
+--module-path \
+  $JLINK_LIBS \
+--no-header-files \
+--no-man-pages \
+--add-modules \
+javafx.base,\
+javafx.fxml,\
+javafx.controls,\
+javafx.graphics,\
+javafx.swing,\
+org.apache.pdfbox,\
+org.apache.pdfbox.io,\
+org.apache.fontbox,\
+framework.smack,\
+framework.smack_jfx,\
+commons.logging,\
+jdk.localedata,\
+app.mmt \
+--output \
+$JLINK_RESULT \
+--include-locales=en,de \
+--add-options " --add-modules=app.mmt"
+
+set +x
+
+    popd
+}
+
+## package : Create the product installer using jpackage.
+function task_package {
+    task_link
+    task_installer_info
+    task_platform
+
+    util_msg "jpackage $PLATFORM ..."
+
+    pushd $PROJECT_HOME
+
+    local PACKAGE_TMP=target/packageTmp
+    rm -rf $PACKAGE_TMP
+    mkdir $PACKAGE_TMP
+
+    local INSTALLER=target/packageInstaller
+    rm -rf $INSTALLER
+
+set -x
+
+jpackage \
+@package/resources/$PLATFORM/jpackage.opts \
+--resource-dir package/resources/$PLATFORM \
+--verbose \
+--name "$APP_INFO_NAME" \
+--vendor "$APP_INFO_VENDOR" \
+--app-version "$APP_INFO_VERSION" \
+--module $APP_INFO_MODULE \
+--runtime-image $JLINK_RESULT \
+--dest $INSTALLER \
+--temp $PACKAGE_TMP
+
+set +x
+
+echo "Created installer @ $INSTALLER"
+ls -la $INSTALLER
+    popd
 }
 
 CMD=${1:-}
@@ -61,6 +164,6 @@ RESOLVED_COMMAND=$(echo "task_"$CMD | sed 's/-/_/g')
 if [ "$(LC_ALL=C type -t $RESOLVED_COMMAND)" == "function" ]; then
   $RESOLVED_COMMAND "$@"
 else
-  task_usage
+  echo "Usage: $0"
+  sed -n 's/^##//p' <$0 | column -t -s ':' |  sed -E $'s/^/\t/'
 fi
-

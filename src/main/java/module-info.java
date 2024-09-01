@@ -16,8 +16,7 @@ module app.mmt {
     requires javafx.fxml;
     requires org.apache.pdfbox;
 
-    exports de.michab.app.mmt
-    to javafx.graphics;
+    exports de.michab.app.mmt;
     exports de.michab.app.mmt.components
     to javafx.fxml;
 

@@ -1,214 +1,405 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <artifactId>mmt-app</artifactId>
-  <groupId>micbinz</groupId>
-  <version>2.11</version>
-  <name>MMT 2.0</name>
-  <description>The MMT2.0 application.</description>
+	<artifactId>mmt-app</artifactId>
+	<groupId>micbinz</groupId>
+	<version>2.11</version>
+	<name>MMT 2.0</name>
+	<description>The MMT2.0 application.</description>
 
-  <properties>
-    <module>app.mmt/de.michab.app.mmt.Mmt</module>
-    <vendor>Michael Binz</vendor>
-    <unused-micbinz-platform>mac</unused-micbinz-platform>
-    <maven.compiler.target>21</maven.compiler.target>
-    <maven.compiler.source>21</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
-    <dep.javafx.version>21.0.3-ea+1</dep.javafx.version>
-    <dep.pdfbox.version>3.0.0</dep.pdfbox.version>
-  </properties>
+	<properties>
+		<module>app.mmt/de.michab.app.mmt.Mmt</module>
+		<vendor>Michael Binz</vendor>
+		<maven.compiler.target>21</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-  <repositories>
-   <repository>
-     <id>github</id>
-     <name>GitHub OWNER Apache Maven Packages</name>
-     <url>https://maven.pkg.github.com/michab66/dev_smack</url>
-   </repository>
-  </repositories>
+		<dep.commons-logging.version>1.2</dep.commons-logging.version>
+		<dep.javafx.version>21.0.3-ea+1</dep.javafx.version>
+		<dep.pdfbox.version>3.0.0</dep.pdfbox.version>
+		<dep.moditect.version>1.2.2.Final</dep.moditect.version>
+	</properties>
 
-  <build>
-<resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M4</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-          <encoding>ISO-8859-1</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jlink-plugin</artifactId>
-        <version>3.0.0-alpha-micbinz-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <configuration>
-			<noHeaderFiles>true</noHeaderFiles>
-			<noManPages>true</noManPages>
-            <includeLocales>en,de</includeLocales>
-            <excludeModules>
-                <module>javafx.baseEmpty</module>
-                <module>javafx.controlsEmpty</module>
-                <module>javafx.graphicsEmpty</module>
-                <module>javafx.fxmlEmpty</module>
-                <module>javafx.swingEmpty</module>
-            </excludeModules>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jmod-plugin</artifactId>
-        <!-- Ensure we get the fix from MJMOD-23 (https://issues.apache.org/jira/browse/MJMOD-23) -->
-        <version>3.0.0-alpha-micbinz-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <dependencies>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>6.2</version> <!-- Use newer version of ASM -->
-        </dependency>
-    </dependencies>
-      </plugin>
-          <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>
-                                de.michab.app.mmt.Mmt
-                            </mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-          </plugin>
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/smacklib/dev_smack</url>
+		</repository>
+	</repositories>
 
-          <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>copy-dependencies</goal>
-                </goals>
-                <inherited>false</inherited>
-                <configuration>
-                  <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                  <includeScope>compile</includeScope>
-                  <useBaseVersion>false</useBaseVersion>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
+	<dependencies>
+		<dependency>
+			<groupId>smacklib</groupId>
+			<artifactId>smack_jfx</artifactId>
+			<version>21.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-base</artifactId>
+			<version>${dep.javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${dep.javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>${dep.javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>${dep.javafx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-swing</artifactId>
+			<version>${dep.javafx.version}</version>
+		</dependency>
 
-          <!-- Allows execution from command line 'mvn exec:exec' -->
-          <!-- See https://stackoverflow.com/questions/9924994/maven-execjava-run-class-file-within-jar/26448245#26448245 -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <configuration>
-              <executable>java</executable>
-              <arguments>
-                <argument>--module-path</argument>
-                <argument>target/${project.artifactId}-${project.version}.jar;target/lib/</argument>
-                <argument>--module</argument>
-                <argument>app.mmt/de.michab.app.mmt.Mmt</argument>
-              </arguments>
-            </configuration>
-          </plugin>
-    </plugins>
-  </build>
+		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>${dep.pdfbox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>fontbox</artifactId>
+			<version>${dep.pdfbox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-io</artifactId>
+			<version>${dep.pdfbox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${dep.commons-logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-  <dependencies>
-  
-<!--     <dependency>
-      <groupId>smacklib</groupId>
-      <artifactId>smack</artifactId>
-      <version>21.411-SNAPSHOT</version>
-    </dependency> -->
-<dependency>
-  <groupId>smacklib</groupId>
-  <artifactId>smack_jfx</artifactId>
-  <version>21.5</version>
-</dependency>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-base</artifactId>
-      <version>${dep.javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>${dep.javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-graphics</artifactId>
-      <version>${dep.javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-fxml</artifactId>
-      <version>${dep.javafx.version}</version>
-    </dependency>
-    <dependency>
-	  <groupId>org.openjfx</groupId>
-      <artifactId>javafx-swing</artifactId>
-      <version>${dep.javafx.version}</version>
-    </dependency>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<encoding>ISO-8859-1</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>
+								de.michab.app.mmt.Mmt
+							</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
-    <dependency>
-      <groupId>org.apache.pdfbox</groupId>
-      <artifactId>pdfbox</artifactId>
-      <version>${dep.pdfbox.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.pdfbox</groupId>
-      <artifactId>fontbox</artifactId>
-      <version>${dep.pdfbox.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.pdfbox</groupId>
-      <artifactId>pdfbox-io</artifactId>
-      <version>${dep.pdfbox.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
-    </dependency>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<includeScope>compile</includeScope>
+							<useBaseVersion>false</useBaseVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-    <!-- https://mvnrepository.com/artifact/junit/junit -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+			<!-- Allows execution from command line 'mvn exec:exec' -->
+			<!-- See
+			https://stackoverflow.com/questions/9924994/maven-execjava-run-class-file-within-jar/26448245#26448245 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>--module-path</argument>
+						<argument>
+							target/${project.artifactId}-${project.version}.jar;target/lib/</argument>
+						<argument>--module</argument>
+						<argument>app.mmt/de.michab.app.mmt.Mmt</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
+				<version>${dep.moditect.version}</version>
+				<executions>
+					<execution>
+						<id>moditect-pdfbox</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>pdfbox</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.pdfbox
+										{
+										exports
+										org.apache.pdfbox.pdmodel.graphics.color;
+										exports
+										org.apache.pdfbox.pdmodel.common.function.type4;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.form;
+										exports org.apache.pdfbox.contentstream;
+										exports org.apache.pdfbox.pdfwriter;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.blend;
+										exports
+										org.apache.pdfbox.pdmodel.font.encoding;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.action;
+										exports
+										org.apache.pdfbox.util.filetypedetector;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.optionalcontent;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.markedcontent;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation.layout;
+										exports
+										org.apache.pdfbox.pdmodel.common;
+										exports org.apache.pdfbox.pdfparser;
+										exports org.apache.pdfbox.pdmodel;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation.handlers;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure;
+										exports org.apache.pdfbox.util;
+										exports org.apache.pdfbox.cos;
+										exports org.apache.pdfbox.printing;
+										exports org.apache.pdfbox.filter;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.shading;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.image;
+										exports org.apache.pdfbox.multipdf;
+										// exports org.apache.pdfbox.it.gsub;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.measurement;
+										exports org.apache.pdfbox.text;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.pattern;
+										exports org.apache.pdfbox;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.viewerpreferences;
+										exports org.apache.pdfbox.pdmodel.font;
+										exports
+										org.apache.pdfbox.contentstream.operator;
+										exports
+										org.apache.pdfbox.contentstream.operator.graphics;
+										exports
+										org.apache.pdfbox.contentstream.operator.color;
+										exports
+										org.apache.pdfbox.contentstream.operator.text;
+										exports
+										org.apache.pdfbox.pdmodel.common.filespecification;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.annotation;
+										exports org.apache.pdfbox.rendering;
+										exports
+										org.apache.pdfbox.pdmodel.common.function;
+										exports
+										org.apache.pdfbox.contentstream.operator.markedcontent;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.pagenavigation;
+										// exports org.apache.pdfbox.encryption;
+										exports
+										org.apache.pdfbox.contentstream.operator.state;
+										exports org.apache.pdfbox.pdmodel.fdf;
+										exports
+										org.apache.pdfbox.pdmodel.graphics;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.digitalsignature.visible;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.taggedpdf;
+										exports
+										org.apache.pdfbox.pdmodel.documentinterchange.prepress;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.form;
+										exports
+										org.apache.pdfbox.pdmodel.encryption;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.digitalsignature;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination;
+										exports
+										org.apache.pdfbox.pdmodel.graphics.state;
+										exports
+										org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline;
+										requires commons.logging;
+										requires org.apache.fontbox;
+										requires org.apache.pdfbox.io;
+										requires java.desktop;
+										requires java.xml;
+										// requires org.bouncycastle.pkix;
+										// requires org.bouncycastle.provider;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+ 					<execution>
+						<id>moditect-fontbox</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>fontbox</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.fontbox
+										{
+										exports org.apache.fontbox.pfb;
+										exports
+										org.apache.fontbox.util.autodetect;
+										exports org.apache.fontbox.afm;
+										exports org.apache.fontbox.cmap;
+										exports org.apache.fontbox.encoding;
+										exports org.apache.fontbox.ttf.table.common;
+										exports org.apache.fontbox.ttf.model;
+										exports org.apache.fontbox.ttf.table.gsub;
+										exports org.apache.fontbox;
+										exports org.apache.fontbox.ttf.gsub;
+										exports org.apache.fontbox.util;
+										exports org.apache.fontbox.ttf;
+										exports org.apache.fontbox.cff;
+										exports org.apache.fontbox.type1;
+                    requires org.apache.pdfbox.io;
+										requires commons.logging;
+										requires java.desktop;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+ 					<execution>
+						<id>moditect-pdfbox-io</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>org.apache.pdfbox</groupId>
+										<artifactId>pdfbox-io</artifactId>
+										<version>${dep.pdfbox.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module org.apache.pdfbox.io
+										{
+										exports org.apache.pdfbox.io;
+										requires commons.logging;
+										requires java.desktop;
+                    requires jdk.unsupported;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-module-infos-commons-logging</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-module-info</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/modules</outputDirectory>
+							<modules>
+								<module>
+									<artifact>
+										<groupId>commons-logging</groupId>
+										<artifactId>commons-logging</artifactId>
+										<version>${dep.commons-logging.version}</version>
+									</artifact>
+									<moduleInfoSource>
+										module commons.logging
+										{
+										exports org.apache.commons.logging;
+										}
+									</moduleInfoSource>
+								</module>
+							</modules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
