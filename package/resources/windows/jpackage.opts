@@ -2,4 +2,4 @@
 --win-upgrade-uuid CA01EFB3-036D-45D5-A468-AB6CED7E34F8
 --win-menu
 --win-shortcut
---icon mmt_app/package/windows/mmt-icon.ico"
+--icon package/resources/windows/mmt-icon.ico
