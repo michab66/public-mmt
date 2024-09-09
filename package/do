@@ -86,7 +86,7 @@ cp target/lib/* $JLINK_LIBS
 sleep 1
 cp target/modules/* $JLINK_LIBS
 sleep 1
-cp target/mmt-app-2.11.jar $JLINK_LIBS
+cp target/mmt-app-p-2.11.jar $JLINK_LIBS
 
 set -x
 # See handling of --add-options:

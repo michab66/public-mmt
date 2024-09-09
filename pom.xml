@@ -5,7 +5,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>mmt-app</artifactId>
+	<artifactId>mmt-app-p</artifactId>
 	<groupId>micbinz</groupId>
 	<version>2.11</version>
 	<name>MMT 2.0</name>
@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<dep.commons-logging.version>1.2</dep.commons-logging.version>
-		<dep.javafx.version>21.0.3-ea+1</dep.javafx.version>
+		<dep.javafx.version>22.0.2</dep.javafx.version>
 		<dep.pdfbox.version>3.0.0</dep.pdfbox.version>
 		<dep.moditect.version>1.2.2.Final</dep.moditect.version>
 	</properties>

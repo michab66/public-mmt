@@ -9,9 +9,9 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.logging.Logger;
 
+import org.jdesktop.util.PlatformType;
 import org.smack.application.ApplicationInfo;
 import org.smack.fx.ImageUtil;
-import org.smack.util.Duration;
 import org.smack.util.ServiceManager;
 import org.smack.util.resource.ResourceManager;
 
@@ -94,16 +94,16 @@ public abstract class SingleFrameApplication extends Application
 
     protected void exit()
     {
+        LOG.warning( "Exiting ..." );
+
         Platform.exit();
 
-        Thread t = new Thread( () ->  {
-            sleep( 2 * Duration.MS_SEC );
-            LOG.warning( "SingleFrameApplication system exit called." );
-            System.exit( 0 );
-        } );
-
-        t.setDaemon( true );
-        t.start();
+        // On Mac we need to directly terminate, otherwise
+        // we get a SEGV.
+        if ( PlatformType.is(PlatformType.OS_X) ) {
+            LOG.warning( "Mac exit." );
+            System.exit(0);
+        }
     }
 
     public String getTitle()
