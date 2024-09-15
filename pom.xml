@@ -134,6 +134,9 @@
 								de.michab.app.mmt.Mmt
 							</mainClass>
 						</manifest>
+			            <manifestEntries>
+            			    <SplashScreen-Image>mmt-icon.png</SplashScreen-Image>
+            			</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -168,7 +171,7 @@
 					<arguments>
 						<argument>--module-path</argument>
 						<argument>
-							target/${project.artifactId}-${project.version}.jar;target/lib/</argument>
+							target/${project.artifactId}-${project.version}.jar${path.separator}target/lib/</argument>
 						<argument>--module</argument>
 						<argument>app.mmt/de.michab.app.mmt.Mmt</argument>
 					</arguments>
